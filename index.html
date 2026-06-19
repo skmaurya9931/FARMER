@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer ID Card Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 { color: #2e7d32; }
+
+        /* Form Styling */
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Card Layout Styling */
+        .preview-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .id-card {
+            width: 450px;
+            height: 270px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding: 10px;
+            background-image: radial-gradient(circle at 50% 50%, rgba(240, 248, 240, 0.5), rgba(255, 255, 255, 1));
+        }
+
+        /* Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .header-center {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .header-center .gov-title {
+            font-size: 10px;
+            color: #ff9933;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .header-center .dept-title {
+            font-size: 14px;
+            color: #006400;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .logo-img { height: 30px; }
+
+        /* Card Body */
+        .card-body {
+            display: flex;
+            gap: 10px;
+        }
+
+        .photo-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+        }
+
+        .photo-box {
+            width: 85px;
+            height: 105px;
+            border: 1px solid #999;
+            background: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666;
+            overflow: hidden;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: 8px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .info-side {
+            flex-grow: 1;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 2px 0;
+            vertical-align: top;
+        </tr>
+
+        .label-cell { width: 35%; font-weight: bold; color: #333; }
+        .value-cell { width: 65%; color: #000; }
+
+        /* QR Code & ID area */
+        .qr-zone {
+            width: 70px;
+            height: 70px;
+            border: 1px dashed #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            background: #fafafa;
+        }
+
+        /* Footer */
+        .card-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #f1f8e9;
+            border-top: 1px solid #c8e6c9;
+            text-align: center;
+            padding: 5px 0;
+            font-weight: bold;
+            font-size: 12px;
+            color: #2e7d32;
+        }
+
+        /* Back Card Specifics */
+        .back-body {
+            padding: 5px;
+            font-size: 11px;
+        }
+
+        .land-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .land-table th, .land-table td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .land-table th { background-color: #f2f2f2; }
+
+        .contact-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: #f9f9f9;
+            padding: 5px 0;
+            font-size: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Print Button */
+        .print-btn {
+            grid-column: span 2;
+            padding: 10px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .print-btn:hover { background-color: #1b5e20; }
+
+        @media print {
+            .form-container { display: none; }
+            h2 { display: none; }
+            body { background: white; padding: 0; }
+            .id-card { box-shadow: none; border: 1px solid #000; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Farmer ID Card Generator</h2>
+
+    <div class="form-container">
+        <div class="form-group">
+            <label>Name (English)</label>
+            <input type="text" id="inputName" value="Rajesh Singh" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>नाम (Hindi)</label>
+            <input type="text" id="inputNameHindi" value="राजेश सिंह" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Farmer ID</label>
+            <input type="text" id="inputId" value="6235 037 2761" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Aadhaar Number</label>
+            <input type="text" id="inputAadhaar" value="224713205491" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Gender</label>
+            <select id="inputGender" onchange="updateCard()">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>DOB</label>
+            <input type="text" id="inputDob" value="01/01/1983" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Caste</label>
+            <input type="text" id="inputCaste" value="OBC" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Area</label>
+            <input type="text" id="inputArea" value="Rural" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Approval Date</label>
+            <input type="text" id="inputAppDate" value="10/01/2026" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Download Date</label>
+            <input type="text" id="inputDlDate" value="16/06/2026" oninput="updateCard()">
+        </div>
+        <div class="form-group full-width">
+            <label>Address</label>
+            <input type="text" id="inputAddress" value="S/o: Shivjanam Singh, Ramgarh (ct), Ramgarh, Bihar - 821110" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Khata No.</label>
+            <input type="text" id="inputKhata" value="69" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Khasra No.</label>
+            <input type="text" id="inputKhasra" value="185" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Area (Hectare/Acre)</label>
+            <input type="text" id="inputLandArea" value="0.032" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+            <label>Photo URL (Optional)</label>
+            <input type="text" id="inputPhoto" value="https://via.placeholder.com/85x105" oninput="updateCard()">
+        </div>
+        <button class="print-btn" onclick="window.print()">Print Card</button>
+    </div>
+
+    <div class="preview-container">
+        
+        <div class="id-card">
+            <div class="card-header">
+                <span style="font-size: 12px; font-weight: bold; color: #2e7d32;">AgriStack</span>
+                <div class="header-center">
+                    <p class="gov-title">भारत सरकार</p>
+                    <p class="dept-title">Government of India</p>
+                </div>
+                <div style="font-size: 10px; font-weight: bold;">Emblem</div>
+            </div>
+            
+            <div class="card-body">
+                <div class="photo-side">
+                    <div class="photo-box" id="cardPhoto">Photo</div>
+                    <div class="vertical-text">Approval Date: <span id="cardAppDate">10/01/2026</span></div>
+                </div>
+                
+                <div class="info-side">
+                    <table class="info-table">
+                        <tr><td class="label-cell">नाम</td><td class="value-cell" id="cardNameHindi" style="font-weight: bold;">राजेश सिंह</td></tr>
+                        <tr><td class="label-cell">Name</td><td class="value-cell" id="cardName" style="font-weight: bold;">Rajesh Singh</td></tr>
+                        <tr><td class="label-cell">Gender</td><td class="value-cell" id="cardGender">Male</td></tr>
+                        <tr><td class="label-cell">DOB</td><td class="value-cell" id="cardDob">01/01/1983</td></tr>
+                        <tr><td class="label-cell">Caste</td><td class="value-cell" id="cardCaste">OBC</td></tr>
+                        <tr><td class="label-cell">Area</td><td class="value-cell" id="cardArea">Rural</td></tr>
+                        <tr><td class="label-cell">Aadhaar</td><td class="value-cell" id="cardAadhaar">224713205491</td></tr>
+                    </table>
+                </div>
+
+                <div class="qr-zone">QR Code</div>
+            </div>
+            
+            <div class="card-footer">
+                Farmer ID : <span id="cardId">6235 037 2761</span>
+                <div style="font-size: 9px; font-weight: normal; margin-top: 2px;">Bihar Farmer Registry</div>
+            </div>
+        </div>
+
+        <div class="id-card">
+            <div class="card-header">
+                <span style="font-size: 12px; font-weight: bold; color: #2e7d32;">AgriStack</span>
+                <div class="header-center">
+                    <p class="gov-title" style="color: #006400;">कृषि एवं किसान कल्याण मंत्रालय</p>
+                    <p class="dept-title" style="font-size: 11px; color: #ff9933;">Ministry of Agri & Farmers Welfare</p>
+                </div>
+            </div>
+            
+            <div class="back-body">
+                <div style="font-size: 9px; color: #555; position: absolute; left: 5px; top: 50px; writing-mode: vertical-rl; transform: rotate(180deg);">
+                    Download Date: <span id="cardDlDate">16/06/2026</span>
+                </div>
+                <div style="margin-left: 15px;">
+                    <strong>Address:</strong>
+                    <p id="cardAddress" style="margin: 3px 0; font-size: 10px; color: #333;"></p>
+                    
+                    <table class="land-table">
+                        <tr>
+                            <th>Khata</th>
+                            <th>Khasra</th>
+                            <th>Area</th>
+                        </tr>
+                        <tr>
+                            <td id="cardKhata" style="font-weight: bold;">69</td>
+                            <td id="cardKhasra" style="font-weight: bold;">185</td>
+                            <td id="cardLandArea" style="font-weight: bold;">0.032</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="contact-footer">
+                <span>📞 1800-123-4567</span>
+                <span>🌐 www.bhfr.agristack.gov.in</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateCard() {
+            // Mapping form inputs to card fields
+            document.getElementById('cardName').innerText = document.getElementById('inputName').value;
+            document.getElementById('cardNameHindi').innerText = document.getElementById('inputNameHindi').value;
+            document.getElementById('cardId').innerText = document.getElementById('inputId').value;
+            document.getElementById('cardAadhaar').innerText = document.getElementById('inputAadhaar').value;
+            document.getElementById('cardGender').innerText = document.getElementById('inputGender').value;
+            document.getElementById('cardDob').innerText = document.getElementById('inputDob').value;
+            document.getElementById('cardCaste').innerText = document.getElementById('inputCaste').value;
+            document.getElementById('cardArea').innerText = document.getElementById('inputArea').value;
+            document.getElementById('cardAppDate').innerText = document.getElementById('inputAppDate').value;
+            document.getElementById('cardDlDate').innerText = document.getElementById('inputDlDate').value;
+            document.getElementById('cardAddress').innerText = document.getElementById('inputAddress').value;
+            document.getElementById('cardKhata').innerText = document.getElementById('inputKhata').value;
+            document.getElementById('cardKhasra').innerText = document.getElementById('inputKhasra').value;
+            document.getElementById('cardLandArea').innerText = document.getElementById('inputLandArea').value;
+            
+            // Image handling
+            let photoUrl = document.getElementById('inputPhoto').value;
+            if(photoUrl && photoUrl !== "https://via.placeholder.com/85x105") {
+                document.getElementById('cardPhoto').innerHTML = `<img src="${photoUrl}" alt="Farmer Photo">`;
+            }
+        }
+        
+        // Run once on load to fill back details
+        updateCard();
+    </script>
+</body>
+</html>
